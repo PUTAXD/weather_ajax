@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body>
+    <header>
+      <!-- Fixed navbar -->
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Check Cuaca Di Kotamu!!</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarCollapse"
+            aria-controls="navbarCollapse"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0"></ul>
+            <form class="d-flex" role="search">
+              <input
+                class="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+                id="key"
+              />
+              <button
+                class="btn btn-outline-success"
+                type="submit"
+                id="sisubmit"
+              >
+                Search
+              </button>
+            </form>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div style="margin: 5rem"></div>
+    <main class="container">
+      <div class="bg-body-tertiary p-5 rounded mt-3">
+        <h1 id="kota" class="text-primary">City Name</h1>
+        <p id="temp">Temperatur :</p>
+        <p id="angin">Kecepatan angin :</p>
+        <p id="deskripsi">Keadaan :</p>
+      </div>
+    </main>
+
+    <!--  -->
+    <div id="data-json"></div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      function getProductsUrl(keyword, apiKey) {
+        return `https://api.openweathermap.org/data/2.5/weather?q=${keyword}&appid=${apiKey}`;
+      }
+
+      function getProducts(keyword, succesFunction, errorFunction) {
+        // Code AJAX Here!
+        const ajax = new XMLHttpRequest();
+        const apiKey = "be3fe734d9fc7371cf9151c62540a453";
+        const url = getProductsUrl(keyword, apiKey);
+        ajax.open("GET", url);
+        ajax.send();
+        ajax.onload = function () {
+          if (ajax.status === 200) {
+            const data = JSON.parse(ajax.responseText);
+            succesFunction(data);
+          } else if (ajax.status === 400) {
+            console.log("Keywordnya kosong atau URL salah");
+          } else {
+            errorFunction();
+          }
+        };
+      }
+      document
+        .getElementById("sisubmit")
+        .addEventListener("click", function (event) {
+          const keyword = getProducts(
+            document.getElementById("key").value,
+            function (data) {
+              displayData(data);
+              console.log(data);
+            },
+            function () {
+              errorFunction();
+            }
+          );
+          event.preventDefault();
+        });
+
+      function displayData(data) {
+        const kota = (document.getElementById("kota").innerText = data.name);
+        const temp = data.main.temp;
+        const angin = data.wind.speed;
+        const deskripsi = data.weather[0].description;
+
+        document.getElementById("temp").innerText +=
+          (temp - 273).toFixed(2) + " C";
+        document.getElementById("angin").innerText += angin;
+        document.getElementById("deskripsi").innerText += deskripsi;
+      }
+      function clearData() {
+        const list = document.getElementById("data-json");
+        list.textContent = "";
+      }
+
+      function errorFunction() {
+        alert("Gagal!!");
+      }
+    </script>
+  </body>
+</html>

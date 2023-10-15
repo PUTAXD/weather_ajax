@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mengambil Data Cuaca dengan AJAX</title>
+  </head>
+  <body>
+    <h1>Informasi Cuaca</h1>
+    <div id="cuaca-info">
+      <!-- Data cuaca akan ditampilkan di sini -->
+    </div>
+
+    <script>
+      // Ganti dengan kunci API OpenWeatherMap yang valid
+      const apiKey = "be3fe734d9fc7371cf9151c62540a453";
+      const apiUrl =
+        "https://api.openweathermap.org/data/2.5/weather?q=Jakarta&appid=" +
+        apiKey;
+
+      // Membuat objek XMLHttpRequest
+      const xhr = new XMLHttpRequest();
+
+      // Menyiapkan callback ketika permintaan selesai
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          const cuacaInfo = document.getElementById("cuaca-info");
+          const namaKota = response.name;
+          const suhu = response.main.temp;
+          const kondisiCuaca = response.weather[0].description;
+
+          // Menampilkan data cuaca di halaman web
+          cuacaInfo.innerHTML = `<p>Kota: ${namaKota}</p>`;
+          cuacaInfo.innerHTML += `<p>Suhu: ${suhu} &#8451;</p>`;
+          cuacaInfo.innerHTML += `<p>Kondisi Cuaca: ${kondisiCuaca}</p>`;
+        } else {
+          console.error("Gagal mengambil data cuaca:", xhr.statusText);
+        }
+      };
+
+      // Mengatur metode HTTP dan URL
+      xhr.open("GET", apiUrl, true);
+
+      // Melakukan permintaan ke API
+      xhr.send();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script>
+    function getProductsUrl(keyword, apiKey) {
+      return `https://api.openweathermap.org/data/2.5/weather?q=${keyword}&appid=${apiKey}`;
+    }
+
+    function getProducts(keyword, succesFunction, errorFunction) {
+      // Code AJAX Here!
+      const ajax = new XMLHttpRequest();
+      const apiKey = "be3fe734d9fc7371cf9151c62540a453";
+      const url = getProductsUrl(keyword, apiKey);
+      ajax.open("GET", url, true);
+      ajax.send();
+      ajax.onload = function () {
+        if (ajax.status === 200) {
+          const data = JSON.parse(ajax.responseText);
+          succesFunction(data);
+        } else {
+          errorFunction();
+        }
+      };
+    }
+
+    function buttonClick() {
+      const keyword = getProducts(
+        document.getElementById("keyword").value,
+        function (data) {
+          displayData(data);
+          console.log(data);
+        }
+      );
+      console.log(keyword);
+    }
+
+    function displayData(data) {
+      const listkan = document.getElementById("data-json");
+      listkan.innerHTML =
+        data.name +
+        "<br/>" +
+        "suhu: " +
+        (data.main.temp - 273) +
+        "<br/>" +
+        "Kecepatan Angin : " +
+        data.wind.speed +
+        "";
+      // console.log(data);
+    }
+    function clearData() {
+      const list = document.getElementById("data-json");
+      list.textContent = "";
+    }
+
+    function errorFunction() {
+      alert("Gagal!!");
+    }
+  </script>
+  <body>
+    <label for="provinsi">Masukan Nama Provinsi</label><br />
+    <input type="text" id="keyword" />
+    <button onclick="buttonClick()">Submit</button>
+    <div id="data-json"></div>
+  </body>
+</html>
